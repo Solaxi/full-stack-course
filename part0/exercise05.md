@@ -34,8 +34,7 @@ sequenceDiagram
 
     browser->>server: GET https://studies.cs.helsinki.fi/favicon.ico
     activate server
-    server->>browser: HTML document
-    Note left of server: &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;a href="/stats"&gt;Course stats&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;
+    server->>browser: HTML document with link to course stats
     deactivate server
 
 ```
