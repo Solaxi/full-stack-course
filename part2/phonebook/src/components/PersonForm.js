@@ -1,6 +1,6 @@
 const PersonForm = (props) => {
     return (
-        <form onSubmit={props.onAddName}>
+        <form onSubmit={props.onAddPerson}>
         <table><tbody>
         <tr><td>Name:</td><td><input value={props.newName} onChange={props.onNameChange} /></td></tr>
         <tr><td>Phone:</td><td><input value={props.newNumber} onChange={props.onNumberChange} /></td></tr>
