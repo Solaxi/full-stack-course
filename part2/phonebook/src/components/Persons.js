@@ -1,7 +1,7 @@
 const Persons = ({persons, removePerson}) => {
     return (
         <>
-        {persons.map(person => <><Person key={person.id} person={person} removePerson={removePerson} /></>)}
+        {persons.map(person => <Person key={person.id} person={person} removePerson={removePerson} />)}
         </>
     )
 }
