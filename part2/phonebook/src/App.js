@@ -4,6 +4,9 @@ import phonebookService from './services/phonebookService'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
+
+import './index.css'
 
 const App = () => {
   useEffect(() => { 
@@ -18,6 +21,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState("")
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
   const shownPersons = filter === "" ? persons : persons.filter(person => person.name.toLowerCase().indexOf(filter.toLowerCase()) > -1)
 
   /*
@@ -41,9 +46,19 @@ const App = () => {
       .create(newPerson)
       .then(createdPerson => {
         setPersons(persons.concat(createdPerson))
+
+        setSuccessMessage(`Added ${createdPerson.name}`)
+        setMessageTimeout()
       })
     setNewName("")
     setNewNumber("")
+  }
+
+  const setMessageTimeout = () => {
+    setTimeout(() => {
+      setSuccessMessage(null)
+      setErrorMessage(null)
+    }, 5000)
   }
 
   /*
@@ -56,6 +71,10 @@ const App = () => {
       .update(changedPerson)
       .then(returnedPerson => {
         setPersons(persons.map(person => person.id !== returnedPerson.id ? person : returnedPerson))
+      })
+      .catch(error => {
+        setErrorMessage(`Information of ${existingPerson.name} has already been removed from server`)
+        setMessageTimeout()
       })
   }
 
@@ -86,6 +105,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} style="error" />
+      <Notification message={successMessage} style="success" />
       <Filter onChange={handleFilterChange} />
       <h2>Add new</h2>
       <PersonForm onNameChange={handleNameChange} 
