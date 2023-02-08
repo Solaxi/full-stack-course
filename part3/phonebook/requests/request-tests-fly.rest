@@ -1,0 +1,28 @@
+GET https://phonebook-solaxi-fullstack.fly.dev/api/persons
+
+###
+GET https://phonebook-solaxi-fullstack.fly.dev/api/persons/1
+
+###
+GET https://phonebook-solaxi-fullstack.fly.dev/api/persons/430434343
+
+###
+DELETE https://phonebook-solaxi-fullstack.fly.dev/api/persons/33760
+
+###
+POST https://phonebook-solaxi-fullstack.fly.dev/api/persons
+Content-Type: application/json
+
+{
+    "name": "",
+    "number": "555 666 777"
+}
+
+###
+POST https://phonebook-solaxi-fullstack.fly.dev/api/persons
+Content-Type: application/json
+
+{
+    "name": "Esko",
+    "number": "555 666 777"
+}
