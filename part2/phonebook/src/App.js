@@ -82,7 +82,7 @@ const App = () => {
   Remove person from server
   */
   const removePerson = (event) => {
-    const id = parseInt(event.target.value)
+    const id = event.target.value
     const personToRemove = persons.find(person => person.id === id)
     console.log(`removing ${id}, ${personToRemove.name}`);
     if (!window.confirm(`Delete ${personToRemove.name}?`)) {
@@ -91,9 +91,9 @@ const App = () => {
 
     phonebookService
       .remove(id)
-      .then(statusOk => {
-        console.log(`removed ${id}: `, statusOk);
-        if (statusOk) setPersons(persons.filter(person => person.id !== id))
+      .then(result => {
+        console.log(`removed ${id}`);
+        setPersons(persons.filter(person => person.id !== id))
       })
   }
 
