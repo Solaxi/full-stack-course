@@ -76,7 +76,7 @@ app.post('/api/persons', (request, response, next) => {
   const body = request.body
   console.log('Trying to add person ', body)
 
-  Person.find({ name: body.name }).then(existing => {
+  Person.findOne({ name: body.name }).then(existing => {
     if (existing) {
       console.log(`Person with name ${body.name} exists!`)
       return response.status(400).json({ error: 'Name must be unique' }).end()
