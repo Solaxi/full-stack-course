@@ -50,6 +50,11 @@ const App = () => {
         setSuccessMessage(`Added ${createdPerson.name}`)
         setMessageTimeout()
       })
+      .catch(error => {
+        console.log(error.response.data.error)
+        setErrorMessage(error.response.data.error)
+        setMessageTimeout()
+      })
     setNewName("")
     setNewNumber("")
   }
@@ -73,7 +78,8 @@ const App = () => {
         setPersons(persons.map(person => person.id !== returnedPerson.id ? person : returnedPerson))
       })
       .catch(error => {
-        setErrorMessage(`Information of ${existingPerson.name} has already been removed from server`)
+        console.log(error.response.data.error)
+        setErrorMessage(error.response.data.error)
         setMessageTimeout()
       })
   }
