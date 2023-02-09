@@ -12,14 +12,14 @@ Content-Type: application/json
 
 {
     "name": "Esko",
-    "number": "555 666 777"
+    "number": "044-3391596"
 }
 
 ###
-PUT http://localhost:3001/api/persons/63e4d6d8c5c0aea5263b1ccc
+PUT http://localhost:3001/api/persons/63e50eac2a12900c1edbf322
 Content-Type: application/json
 
 {
-    "name": "Viljami",
-    "number": "111 222 333"
+    "name": "Changed Esko",
+    "number": "044-3391596"
 }
