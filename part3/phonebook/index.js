@@ -1,26 +1,3 @@
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
-
 require("dotenv").config()
 const express = require("express")
 const cors = require("cors")
@@ -44,25 +21,27 @@ app.use(morgan(":method :url :status :res[content-length] - :response-time ms :p
 /*
 GET all persons
 */
-app.get("/api/persons", (request, response) => {
+app.get("/api/persons", (request, response, next) => {
     Person.find({}).then(persons => {
         response.json(persons)
     })
+    .catch(error => next(error))
 })
 
 /*
 GET phonebook status information
 */
-app.get("/info", (request, response) => {
+app.get("/info", (request, response, next) => {
     Person.find({}).then(persons => {
         response.send(`<p>Phonebook has ${persons.length} entries</p><p>${new Date()}</p>`)
     })
+    .catch(error => next(error))
 })
 
 /*
 GET a person with a spesific ID
 */
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
     const id = request.params.id
     console.log(`Finding person with id ${id}`);
     
@@ -74,28 +53,26 @@ app.get("/api/persons/:id", (request, response) => {
     
         response.json(person)
     })
+    .catch(error => next(error))
 })
 
 /*
 DELETE person with a spesific ID
 */
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
     const id = request.params.id
     console.log(`Deleting person with id ${id}`);
 
-    Person.findById(id).then(person => {
-        if (person) {
-            person.delete().then(result => {
-                response.status(204).end()
-            })
-        }
+    Person.findByIdAndDelete(id).then(result => {
+        response.status(204).end()
     })
+    .catch(error => next(error))
 })
 
 /*
 POST a new person
 */
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
     const body = request.body
     console.log("Trying to add person ", body);
 
@@ -111,12 +88,46 @@ app.post("/api/persons", (request, response) => {
         name: body.name,
         number: body.number
     })
+
     person.save().then(savedPerson => {
         response.json(savedPerson)
     })
+    .catch(error => next(error))
+})
+
+/*
+PUT new person info into existing one
+*/
+app.put("/api/persons/:id", (request, response, next) => {
+    const id = request.params.id
+    const body = request.body
+    console.log(`Trying to update ${body.name}`);
+
+    const person = {
+        name: body.name,
+        number: body.number
+    }
+
+    Person.findByIdAndUpdate(id, person, {new: true}).then(updatedPerson => {
+        response.json(updatedPerson)
+    })
+    .catch(error => next(error))
 })
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
+
+
+//errorHandler middleware is added last
+const errorHandler = (error, request, response, next) => {
+    console.error(error.name, error.message);
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({error:`invalid id`})
+    }
+
+    next(error)
+}
+app.use(errorHandler)
