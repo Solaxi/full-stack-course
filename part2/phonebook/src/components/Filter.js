@@ -1,9 +1,9 @@
 const Filter = ({onChange}) => {
-    return (
-        <>
+  return (
+    <>
         Filter shown with <input onChange={onChange} />
-        </>
-    )
+    </>
+  )
 }
 
 export default Filter

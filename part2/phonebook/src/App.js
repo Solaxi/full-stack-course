@@ -11,19 +11,19 @@ import './index.css'
 const App = () => {
   useEffect(() => { 
     phonebookService
-    .getAll()
-    .then(allPersons => {
-      setPersons(allPersons)
-    })
+      .getAll()
+      .then(allPersons => {
+        setPersons(allPersons)
+      })
   },[])
 
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [filter, setFilter] = useState("")
+  const [filter, setFilter] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
-  const shownPersons = filter === "" ? persons : persons.filter(person => person.name.toLowerCase().indexOf(filter.toLowerCase()) > -1)
+  const shownPersons = filter === '' ? persons : persons.filter(person => person.name.toLowerCase().indexOf(filter.toLowerCase()) > -1)
 
   /*
   Create new PhoneBook contact
@@ -55,8 +55,8 @@ const App = () => {
         setErrorMessage(error.response.data.error)
         setMessageTimeout()
       })
-    setNewName("")
-    setNewNumber("")
+    setNewName('')
+    setNewNumber('')
   }
 
   const setMessageTimeout = () => {
@@ -71,7 +71,7 @@ const App = () => {
   */
   const changePerson = (existingPerson) => {
     const changedPerson = {...existingPerson, number: newNumber}
-    console.log("updating ", changedPerson);
+    console.log('updating ', changedPerson)
     phonebookService
       .update(changedPerson)
       .then(returnedPerson => {
@@ -90,15 +90,15 @@ const App = () => {
   const removePerson = (event) => {
     const id = event.target.value
     const personToRemove = persons.find(person => person.id === id)
-    console.log(`removing ${id}, ${personToRemove.name}`);
+    console.log(`removing ${id}, ${personToRemove.name}`)
     if (!window.confirm(`Delete ${personToRemove.name}?`)) {
       return
     }
 
     phonebookService
       .remove(id)
-      .then(result => {
-        console.log(`removed ${id}`);
+      .then(() => {
+        console.log(`removed ${id}`)
         setPersons(persons.filter(person => person.id !== id))
       })
   }
@@ -116,10 +116,10 @@ const App = () => {
       <Filter onChange={handleFilterChange} />
       <h2>Add new</h2>
       <PersonForm onNameChange={handleNameChange} 
-                  onNumberChange={handleNumberChange} 
-                  onAddPerson={addPerson} 
-                  newName={newName}
-                  newNumber={newNumber} />
+        onNumberChange={handleNumberChange} 
+        onAddPerson={addPerson} 
+        newName={newName}
+        newNumber={newNumber} />
       <h2>Numbers</h2>
       <Persons persons={shownPersons} removePerson={removePerson} />
     </div>
