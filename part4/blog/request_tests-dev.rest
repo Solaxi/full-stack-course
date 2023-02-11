@@ -6,7 +6,7 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Eskos First Blog",
+    "title": "Eskos Second Blog",
     "author": "Esko Poutanen",
     "url": "https://eskosthoughts.blog",
     "likes": 567812
