@@ -19,7 +19,7 @@ const App = () => {
     countriesService
       .find(search)
       .then(foundCountries => {
-        console.log("found countries ", foundCountries.length)
+        console.log('found countries ', foundCountries.length)
 
         setMessage(null)
         setCountry(null)
@@ -27,7 +27,7 @@ const App = () => {
         setWeather(null)
 
         if (foundCountries.length > 10) {
-          setMessage("Too many matches (>10), please refine your search")
+          setMessage('Too many matches (>10), please refine your search')
         } else if (foundCountries.length === 1 ) {
           showCountryAndWeather(foundCountries[0])
         } else {
@@ -49,7 +49,7 @@ const App = () => {
   also search weather info for it
   */
   const showCountryAndWeather = (countryToShow) => {
-    console.log(`Showing country ${countryToShow.name.common}`);
+    console.log(`Showing country ${countryToShow.name.common}`)
     setCountry(countryToShow)
 
     countriesService
