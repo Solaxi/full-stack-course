@@ -68,3 +68,17 @@ describe('total likes', () => {
     expect(listHelper.totalLikes(blogList)).toBe(36)
   })
 })
+
+describe('favourite blog', () => {
+  test('of empty is empty', () => {
+    expect(listHelper.favouriteBlog([])).toBe(undefined)
+  })
+
+  test('when list has only one blog', () => {
+    expect(listHelper.favouriteBlog([blogList[0]])).toEqual(blogList[0])
+  })
+
+  test('of a bigger list select favourite', () => {
+    expect(listHelper.favouriteBlog(blogList)).toBe(blogList[2])
+  })
+})
