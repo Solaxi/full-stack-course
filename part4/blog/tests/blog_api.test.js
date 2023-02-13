@@ -112,6 +112,28 @@ describe('deleting blogs', () => {
   })
 })
 
+describe('updating blogs', () => {
+  test('succeeds to update blogs like amount', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const updatedLikes = {
+      likes: 69
+    }
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(updatedLikes)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const updatedBlog = blogsAtEnd.find(b => b.id === blogToUpdate.id)
+
+    expect(updatedBlog.likes)
+      .toBe(updatedLikes.likes)
+  })
+})
 
 afterAll(async () => {
   await mongoose.connection.close()
