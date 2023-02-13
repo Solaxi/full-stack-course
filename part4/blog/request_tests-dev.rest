@@ -1,8 +1,7 @@
-GET http://localhost:3003/api/blogs
-
+GET http://localhost:3001/api/blogs
 
 ###
-POST http://localhost:3003/api/blogs
+POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
@@ -10,4 +9,17 @@ Content-Type: application/json
     "author": "Esko Poutanen",
     "url": "https://eskosthoughts.blog",
     "likes": 567812
+}
+
+###
+GET http://localhost:3001/api/users
+
+###
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username": "eskop",
+    "name": "Esko Poutanen",
+    "password": "salasana"
 }
