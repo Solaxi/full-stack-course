@@ -51,9 +51,16 @@ const blogList = [
   }
 ]
 
+const newBlog = {
+  title: 'Absolutely new blog post',
+  author: 'blog_api.test.js',
+  url: 'https://awesomeblog.fi',
+  likes: 1
+}
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map(b => b.toJSON())
 }
 
-module.exports = { blogList, blogsInDb }
+module.exports = { blogList, newBlog, blogsInDb }

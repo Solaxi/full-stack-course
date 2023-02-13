@@ -1,17 +1,10 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const helper = require('./test_helper')
-const Blog = require('../models/blog')
 const app = require('../app')
-
 const api = supertest(app)
 
-const newBlog = {
-  title: 'Absolutely new blog post',
-  author: 'blog_api.test.js',
-  url: 'https://awesomeblog.fi',
-  likes: 1
-}
+const Blog = require('../models/blog')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -22,48 +15,52 @@ beforeEach(async () => {
   }
 })
 
-describe('fetch blogs', () => {
-  test('get all blogs', async () => {
+describe('getting blogs', () => {
+  test('can get all blogs', async () => {
     const response = await api
       .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    expect(response.body.length).toBe(helper.blogList.length)
+    expect(response.body.length)
+      .toBe(helper.blogList.length)
   })
 
-  test('_id is renamed to id', async () => {
+  test('Mongoose _id is renamed to id', async () => {
     const blogsAtStart = await helper.blogsInDb()
 
-    expect(blogsAtStart[0].id).toBeDefined()
-    expect(blogsAtStart[0]._id).not.toBeDefined()
+    expect(blogsAtStart[0].id)
+      .toBeDefined()
+    expect(blogsAtStart[0]._id)
+      .not.toBeDefined()
   })
 })
 
-describe('add blog posts', () => {
-  test('add new blog', async () => {
+describe('adding blog posts', () => {
+  test('succeeds with valid data', async () => {
     await api
       .post('/api/blogs')
-      .send(newBlog)
+      .send(helper.newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    expect(blogsAtEnd.length).toBe(helper.blogList.length + 1)
+    expect(blogsAtEnd.length)
+      .toBe(helper.blogList.length + 1)
 
-    const createdBlog = blogsAtEnd.find(b => b.title === newBlog.title)
+    const createdBlog = blogsAtEnd.find(b => b.title === helper.newBlog.title)
     expect(createdBlog).toBeDefined()
-    expect(createdBlog.author).toBe(newBlog.author)
-    expect(createdBlog.url).toBe(newBlog.url)
-    expect(createdBlog.likes).toBe(newBlog.likes)
+    expect(createdBlog.author).toBe(helper.newBlog.author)
+    expect(createdBlog.url).toBe(helper.newBlog.url)
+    expect(createdBlog.likes).toBe(helper.newBlog.likes)
   })
 
-  test('add new blog without likes', async () => {
+  test('new blog without likes defaults to 0 likes', async () => {
     const newBlogWithoutLikes = {
-      title: newBlog.title,
-      author: newBlog.author,
-      url: newBlog.url
+      title: helper.newBlog.title,
+      author: helper.newBlog.author,
+      url: helper.newBlog.url
     }
 
     const savedBlog = await api
@@ -75,10 +72,10 @@ describe('add blog posts', () => {
     expect(savedBlog.body.likes).toBe(0)
   })
 
-  test('add new blog without title', async () => {
+  test('fails with 400 if no title', async () => {
     const newBlogWithoutTitle = {
-      author: newBlog.author,
-      url: newBlog.url
+      author: helper.newBlog.author,
+      url: helper.newBlog.url
     }
 
     await api
@@ -87,16 +84,31 @@ describe('add blog posts', () => {
       .expect(400)
   })
 
-  test('add new blog without url', async () => {
+  test('fails with 400 if no url', async () => {
     const newBlogWithoutUrl = {
-      title: newBlog.title,
-      author: newBlog.author
+      title: helper.newBlog.title,
+      author: helper.newBlog.author
     }
 
     await api
       .post('/api/blogs')
       .send(newBlogWithoutUrl)
       .expect(400)
+  })
+})
+
+describe('deleting blogs', () => {
+  test('succeeds to delete with valid id', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd.map(b => b.title))
+      .not.toContain(blogToDelete.title)
   })
 })
 
