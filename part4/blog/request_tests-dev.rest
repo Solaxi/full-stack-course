@@ -3,12 +3,13 @@ GET http://localhost:3001/api/blogs
 ###
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVza29wIiwiaWQiOiI2M2VhNDg0MjljYmM5NmM0NDhjMGI2MjMiLCJpYXQiOjE2NzYzNjQ2NjV9.Z9HBx08z2nSmuLM_GX6p3Aves6jyTDFwKYeItVYH7W4
 
 {
-    "title": "Eskos Fifth Blog",
+    "title": "Eskos Sixth Blog",
     "author": "Esko Poutanen",
     "url": "https://eskosthoughtsmore.blog",
-    "likes": 5
+    "likes": 6
 }
 
 ###

@@ -1,10 +1,12 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const jwt = require('jsonwebtoken')
 const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -37,9 +39,18 @@ describe('getting blogs', () => {
 })
 
 describe('adding blog posts', () => {
-  test('succeeds with valid data', async () => {
+  let token
+
+  beforeEach(async () => {
+    await User.deleteMany({})
+    const userForToken = await new User(helper.initialUser).save()
+    token = jwt.sign({ username: userForToken.username, id: userForToken._id }, process.env.SECRET)
+  })
+
+  test('succeeds with valid data and user', async () => {
     await api
       .post('/api/blogs')
+      .set('authorization', `Bearer ${token}`)
       .send(helper.newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -65,6 +76,7 @@ describe('adding blog posts', () => {
 
     const savedBlog = await api
       .post('/api/blogs')
+      .set('authorization', `Bearer ${token}`)
       .send(newBlogWithoutLikes)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -80,6 +92,7 @@ describe('adding blog posts', () => {
 
     await api
       .post('/api/blogs')
+      .set('authorization', `Bearer ${token}`)
       .send(newBlogWithoutTitle)
       .expect(400)
   })
@@ -92,8 +105,26 @@ describe('adding blog posts', () => {
 
     await api
       .post('/api/blogs')
+      .set('authorization', `Bearer ${token}`)
       .send(newBlogWithoutUrl)
       .expect(400)
+  })
+
+  test('fails with 401 if invalid token', async () => {
+    const validBlog = {
+      title: helper.newBlog.title,
+      author: helper.newBlog.author,
+      url: helper.newBlog.url
+    }
+
+    const result = await api
+      .post('/api/blogs')
+      .set('authorization', 'UnBearer invalidToken')
+      .send(validBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toEqual('token invalid')
   })
 })
 

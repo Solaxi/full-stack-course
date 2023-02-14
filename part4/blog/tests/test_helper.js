@@ -62,6 +62,8 @@ const newBlog = {
 const initialUser = {
   username: 'root',
   name: 'Initial Test User',
+  passwordHash: '$2b$10$azMy8z.apeq4D.9KHmTCtOyD5.TgrG5.f3BJIyaiyylGZ99w9vWTq',
+  blogs: [],
   password: 'VeryGoodPassword'
 }
 
