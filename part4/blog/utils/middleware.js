@@ -1,4 +1,14 @@
 
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get('authorization')
+
+  if (authorization && authorization.startsWith('Bearer ')) {
+    request.token = authorization.replace('Bearer ', '')
+  }
+
+  next()
+}
+
 //ErrorHandler needs to be last defined middleware
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
@@ -10,4 +20,4 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
-module.exports = { errorHandler }
+module.exports = { errorHandler, tokenExtractor }
