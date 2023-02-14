@@ -7,9 +7,12 @@ app.js
 
 controllers
  | blogs.js
+ | users.js
+ | login.js
 
 models
  | blog.js
+ | user.js
 
 utils
  | config.js
@@ -22,6 +25,7 @@ utils
   | blog.test.js
   | teardown.js
   | test_helper.js
+  | user_api.test.js
 ```
 
 **Required .env values**
@@ -29,6 +33,7 @@ utils
 MONGODB_URI=mongodb+srv://<url>
 TEST_MONGODB_URI=mongodb+srv://<url>
 PORT=3001
+SECRET=<SOMESECRETKEYFORTOKENAUTHETICATION>
 ```
 
 **Scripts**
