@@ -4,6 +4,14 @@ const logger = require('../utils/logger')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
+const userForToken = async token => {
+  const decodedToken = token ? jwt.verify(token, process.env.SECRET) : null
+  if (!(decodedToken && decodedToken.id)) {
+    return null
+  }
+  return await User.findById(decodedToken.id)
+}
+
 blogRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({})
     .populate('user', { username: 1, name: 1 })
@@ -13,14 +21,12 @@ blogRouter.get('/', async (request, response) => {
 blogRouter.post('/', async (request, response) => {
   const { title, author, url, likes } = request.body
 
-  const decodedToken = request.token ? jwt.verify(request.token, process.env.SECRET) : null
-  if (!(decodedToken && decodedToken.id)) {
+  const user = await userForToken(request.token)
+  if (!user) {
     return response.status(401).json({ error: 'token invalid' })
   }
 
-  const user = await User.findById(decodedToken.id)
   const blog = new Blog({ title, author, url, likes, user: user._id })
-
   const newBlog = await blog.save()
 
   user.blogs = user.blogs.concat(newBlog._id)
@@ -33,7 +39,17 @@ blogRouter.delete('/:id', async (request, response) => {
   const blogIdToDelete = request.params.id
   logger.info(`Deleting blog ${blogIdToDelete}`)
 
-  await Blog.findByIdAndDelete(blogIdToDelete)
+  const user = await userForToken(request.token)
+  if (!user) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+
+  const blogToDelete = await Blog.findById(blogIdToDelete)
+  if (blogToDelete.user.toString() !== user._id.toString()) {
+    return response.status(401).json({ error: 'unauthorized to delete' })
+  }
+
+  await blogToDelete.delete()
   response.status(204).end()
 })
 

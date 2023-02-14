@@ -8,11 +8,17 @@ const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
+let token
+
 beforeEach(async () => {
   await Blog.deleteMany({})
 
+  await User.deleteMany({})
+  const userForToken = await new User(helper.initialUser).save()
+  token = jwt.sign({ username: userForToken.username, id: userForToken._id }, process.env.SECRET)
+
   for (let blog of helper.blogList) {
-    const blogObject = new Blog(blog)
+    const blogObject = new Blog({ ...blog, user: userForToken._id })
     await blogObject.save()
   }
 })
@@ -39,14 +45,6 @@ describe('getting blogs', () => {
 })
 
 describe('adding blog posts', () => {
-  let token
-
-  beforeEach(async () => {
-    await User.deleteMany({})
-    const userForToken = await new User(helper.initialUser).save()
-    token = jwt.sign({ username: userForToken.username, id: userForToken._id }, process.env.SECRET)
-  })
-
   test('succeeds with valid data and user', async () => {
     await api
       .post('/api/blogs')
@@ -135,11 +133,28 @@ describe('deleting blogs', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('authorization', `Bearer ${token}`)
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd.map(b => b.title))
       .not.toContain(blogToDelete.title)
+  })
+
+  test('fails with 401 to delete blog with wrong user', async () => {
+    const wrongUser = await new User({ username:'not this blogs user' }).save()
+    const wrongUserToken = jwt.sign({ username: wrongUser.username, id: wrongUser._id }, process.env.SECRET)
+
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    const result = await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('authorization', `Bearer ${wrongUserToken}`)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toEqual('unauthorized to delete')
   })
 })
 
