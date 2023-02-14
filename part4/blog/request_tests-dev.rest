@@ -5,11 +5,14 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Eskos Second Blog",
+    "title": "Eskos Fifth Blog",
     "author": "Esko Poutanen",
-    "url": "https://eskosthoughts.blog",
-    "likes": 567812
+    "url": "https://eskosthoughtsmore.blog",
+    "likes": 5
 }
+
+###
+DELETE http://localhost:3001/api/blogs/63ea5ed2271f5bb1edcf85be
 
 ###
 GET http://localhost:3001/api/users
