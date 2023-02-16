@@ -39,3 +39,17 @@ describe('favourite blog', () => {
       .toBe(testHelper.blogList[2])
   })
 })
+
+describe('most blogs', () => {
+  test('who has most blogs and how many', async () => {
+    expect(listHelper.mostBlogs(testHelper.blogList))
+      .toEqual( { author: 'Robert C. Martin', blogs: 3 })
+  })
+})
+
+describe('most likes', () => {
+  test('who has most likes across all the blogs and how many', async () => {
+    expect(listHelper.mostLikes(testHelper.blogList))
+      .toEqual({ author: 'Edsger W. Dijkstra', likes: 17 })
+  })
+})
